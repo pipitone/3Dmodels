@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-obj = open('surface.obj')
+import sys
+obj = open(sys.argv[1])
 _, _, _, _, _, _, np = obj.readline().strip().split()
 np = int(np)
 vertices=[]
@@ -41,9 +42,11 @@ for triangle in triangles:
   # normal = (  (y2-y1)*(z3-z1)-(y3-y1)*(z2-z1), 
   #            (z2-z1)*(x3-x1)-(x2-x1)*(z3-z1), 
   #            (x2-x1)*(y3-y1)-(x2-x1)*(y2-y1) )
-  print "\tfacet normal {0} {1} {2}".format(0, 0, 0)
-  print "\t\tvertex {0:e} {1:e} {2:e}".format(x1, y1, z1)
-  print "\t\tvertex {0:e} {1:e} {2:e}".format(x2, y2, z2)
-  print "\t\tvertex {0:e} {1:e} {2:e}".format(x3, y3, z3)
-  print "\tendloop"
-print "endfacet"
+  print "\tfacet normal {0:e} {1:e} {2:e}".format(0, 0, 0)
+  print "\t\touter loop"
+  print "\t\t\tvertex {0:e} {1:e} {2:e}".format(x1, y1, z1)
+  print "\t\t\tvertex {0:e} {1:e} {2:e}".format(x2, y2, z2)
+  print "\t\t\tvertex {0:e} {1:e} {2:e}".format(x3, y3, z3)
+  print "\t\tendloop"
+  print "\tendfacet"
+print "endsolid surface"
