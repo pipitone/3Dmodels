@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 import sys
-obj = open(sys.argv[1])
+binary=False
+arg1=sys.argv[1]
+if arg1 == '-b': 
+  from struct import *
+  binary=True
+  obj = open(sys.argv[2])
+else:
+  obj = open(arg1)
 _, _, _, _, _, _, np = obj.readline().strip().split()
 np = int(np)
 vertices=[]
@@ -33,7 +40,11 @@ points = points[nt:]  # ignore these.. (whatever they are)
 for i in range(nt): 
   triangles.append((points.pop(0), points.pop(0), points.pop(0)))
 
-print "solid surface"
+stream = sys.stdout
+if binary:
+  stream.write(pack('<80xI',nt))
+else:
+  stream.writeln("solid surface")
 for triangle in triangles: 
   x1, y1, z1 = vertices[triangle[0]]
   x2, y2, z2 = vertices[triangle[1]]
@@ -42,11 +53,15 @@ for triangle in triangles:
   # normal = (  (y2-y1)*(z3-z1)-(y3-y1)*(z2-z1), 
   #            (z2-z1)*(x3-x1)-(x2-x1)*(z3-z1), 
   #            (x2-x1)*(y3-y1)-(x2-x1)*(y2-y1) )
-  print "\tfacet normal {0:e} {1:e} {2:e}".format(0, 0, 0)
-  print "\t\touter loop"
-  print "\t\t\tvertex {0:e} {1:e} {2:e}".format(x1, y1, z1)
-  print "\t\t\tvertex {0:e} {1:e} {2:e}".format(x2, y2, z2)
-  print "\t\t\tvertex {0:e} {1:e} {2:e}".format(x3, y3, z3)
-  print "\t\tendloop"
-  print "\tendfacet"
-print "endsolid surface"
+  if binary:
+    stream.write(pack('<12f2x',0,0,0,x1,y1,z1,x2,y2,z2,x3,y3,z3))
+  else:
+    stream.writelin("\tfacet normal {0:e} {1:e} {2:e}".format(0, 0, 0))
+    stream.writelin("\t\tstreamer loop")
+    stream.writelin("\t\t\tvertex {0:e} {1:e} {2:e}".format(x1, y1, z1))
+    stream.writelin("\t\t\tvertex {0:e} {1:e} {2:e}".format(x2, y2, z2))
+    stream.writelin("\t\t\tvertex {0:e} {1:e} {2:e}".format(x3, y3, z3))
+    stream.writelin("\t\tendloop")
+    stream.writelin("\tendfacet")
+if not binary:
+  stream.writelin("endsolid surface")
