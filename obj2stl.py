@@ -44,7 +44,7 @@ stream = sys.stdout
 if binary:
   stream.write(pack('<80xI',nt))
 else:
-  stream.writeln("solid surface")
+  stream.write("solid surface\n")
 for triangle in triangles: 
   x1, y1, z1 = vertices[triangle[0]]
   x2, y2, z2 = vertices[triangle[1]]
